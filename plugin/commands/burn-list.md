@@ -12,7 +12,7 @@ recipe has YAML frontmatter with fields: `display_name`, `emoji`,
 Render a single-screen catalog in this exact format (table with one row
 per recipe):
 
-````
+```
 TOKEN BURNER RECIPE CATALOG
 ═══════════════════════════════════════════════════════════════════
 
@@ -25,7 +25,7 @@ TOKEN BURNER RECIPE CATALOG
 
 Run `/burn <target> <recipe-name>` to invoke a specific recipe, or
 `/burn` for a random eligible recipe.
-````
+```
 
 Sort recipes by `default_budget` ascending. Use the `display_name` and
 `emoji` exactly as defined in each recipe's frontmatter. Pad columns so
