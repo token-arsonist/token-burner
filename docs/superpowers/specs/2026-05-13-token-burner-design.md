@@ -54,16 +54,16 @@ The plugin and the site share nothing at runtime. They are bundled in one repo f
 
 ### 3.1 · Slash command surface
 
-A single command, `/burn`, with six call shapes:
+Three slash commands. Claude Code does not support sub-action arguments to a single command (no `/burn status`), so status and list are separate command files.
 
-| Invocation | Behavior |
-|---|---|
-| `/burn` | Random eligible recipe at its default size |
-| `/burn 50k` | Random eligible recipe, target ~50,000 tokens |
-| `/burn architecture-tournament` | Named recipe at its default size |
-| `/burn 50k architecture-tournament` | Named recipe sized to ~50,000 tokens |
-| `/burn status` | Today / week / all-time totals, last 5 sessions |
-| `/burn list` | Show recipe catalog |
+| Invocation | Command file | Behavior |
+|---|---|---|
+| `/burn` | `commands/burn.md` | Random eligible recipe at its default size |
+| `/burn 50k` | `commands/burn.md` | Random eligible recipe, target ~50,000 tokens |
+| `/burn architecture-tournament` | `commands/burn.md` | Named recipe at its default size |
+| `/burn 50k architecture-tournament` | `commands/burn.md` | Named recipe sized to ~50,000 tokens |
+| `/burn-status` | `commands/burn-status.md` | Today / week / all-time totals, last 5 sessions |
+| `/burn-list` | `commands/burn-list.md` | Show recipe catalog |
 
 Token-target syntax accepts `k` / `M` suffixes (`/burn 1.5M`). Bare numbers are treated as raw token counts.
 
@@ -75,7 +75,7 @@ Execution flow:
 
 1. **Parse the argument.** Detect: number? recipe name? `status`? `list`? Or empty?
 2. **Detect context.** `git rev-parse --is-inside-work-tree` plus a check for code files in `.` determines whether a codebase is present. If not, restrict to `context: any` recipes.
-3. **Snapshot tokens.** Call `bash plugin/lib/transcript.sh "$CLAUDE_TRANSCRIPT_PATH"` to get baseline cumulative usage.
+3. **Snapshot tokens.** Call `bash plugin/lib/transcript.sh` (no args — script resolves the current transcript itself using `$CLAUDE_CODE_SESSION_ID` and `$CLAUDE_PROJECT_DIR`, summing the main session file plus any subagent transcripts). See §3.5.
 4. **Classify tier** from target:
    - **Micro** (< 10,000): skip the main recipe; tail subagents only.
    - **Normal** (10,000 – 500,000): one main recipe + tail.
@@ -151,15 +151,37 @@ The agent runs a short follow-up pass that *feels like more of the same recipe*.
 
 ### 3.5 · Transcript reader (`plugin/lib/transcript.sh`)
 
-A small shell script:
+A small shell script that locates the current session's transcript files and sums tokens across all of them (main session + any subagent transcripts dispatched during this `/burn` invocation).
 
 ```bash
 #!/usr/bin/env bash
-# Usage: transcript.sh <transcript-jsonl-path>
-# Prints total tokens (input + output + cache) across the whole transcript.
+# Usage: transcript.sh
+# Resolves current session's transcript files using Claude Code env vars
+# and prints total tokens (input + output + cache) across them.
 
-path="$1"
-[ -f "$path" ] || { echo 0; exit 0; }
+set -euo pipefail
+
+session_id="${CLAUDE_CODE_SESSION_ID:-}"
+project_dir="${CLAUDE_PROJECT_DIR:-$PWD}"
+project_key=$(echo "$project_dir" | tr '/' '-')
+base="$HOME/.claude/projects/$project_key"
+
+# Main session transcript + subagent transcripts (if any)
+files=()
+[ -f "$base/$session_id.jsonl" ] && files+=("$base/$session_id.jsonl")
+if [ -d "$base/$session_id/subagents" ]; then
+  while IFS= read -r f; do files+=("$f"); done \
+    < <(find "$base/$session_id/subagents" -name "*.jsonl" 2>/dev/null)
+fi
+
+# Fallback: most recently modified jsonl under projects/ (handles edge cases)
+if [ ${#files[@]} -eq 0 ]; then
+  fallback=$(find "$HOME/.claude/projects" -name "*.jsonl" -print0 2>/dev/null \
+    | xargs -0 ls -t 2>/dev/null | head -1)
+  [ -n "$fallback" ] && files+=("$fallback")
+fi
+
+[ ${#files[@]} -eq 0 ] && { echo 0; exit 0; }
 
 jq -s '
   [.[] | .message?.usage? // empty
@@ -168,10 +190,12 @@ jq -s '
     + (.cache_creation_input_tokens // 0)
     + (.cache_read_input_tokens // 0)
   ] | add // 0
-' "$path"
+' "${files[@]}"
 ```
 
-If `jq` is unavailable, a Python one-liner fallback is included. Math is done in the script rather than asking Claude to add JSON arithmetic in its head (which is unreliable).
+If `jq` is unavailable, a Python fallback is included (see implementation plan). Math is done in the script rather than asking Claude to add JSON arithmetic in its head (which is unreliable).
+
+**Why no `$CLAUDE_TRANSCRIPT_PATH`:** Claude Code does not expose the active transcript path as an env var to slash commands. It does expose `$CLAUDE_CODE_SESSION_ID` and `$CLAUDE_PROJECT_DIR`, from which the path is constructible. Hooks receive `transcript_path` in their JSON stdin, but hooks are the wrong surface for `/burn` orchestration.
 
 ### 3.6 · Plugin settings
 
@@ -334,6 +358,9 @@ Suggested sequencing for the implementation plan (writing-plans will produce the
 
 ## 10 · Open questions for implementation phase
 
-- Confirm the exact env var Claude Code exposes for transcript path (`$CLAUDE_TRANSCRIPT_PATH` is the assumed name; verify before implementation).
-- Confirm Claude Code plugin manifest format and slash-command directory convention against current docs.
-- Choose: Cloudflare Pages vs. GitHub Pages for hosting (Cloudflare preferred; both work).
+- Hosting choice: **Cloudflare Pages** vs. GitHub Pages (Cloudflare preferred; both work — decision deferred to deploy time).
+- Verify (during implementation) that subagent transcripts actually appear at `~/.claude/projects/<project>/<sessionId>/subagents/agent-*.jsonl`. If subagent usage is already rolled into the main transcript, the reader can skip the subagent file glob. The reader handles both cases by summing files that exist.
+
+**Resolved during planning** (was an open question in the draft):
+- Claude Code plugin conventions: slash commands live in `commands/<name>.md` (frontmatter: `name`, `description`). Args via `$ARGUMENTS`, `$0`, `$1`. No sub-action dispatch (`/burn-status` and `/burn-list` are separate command files).
+- Transcript path: derived from `$CLAUDE_CODE_SESSION_ID` + `$CLAUDE_PROJECT_DIR`. See §3.5.
