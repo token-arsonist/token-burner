@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Resolve current Claude Code session's transcript files and print
-# total tokens (input + output + cache create + cache read).
+# total OUTPUT tokens. Output is what /burn actually controls; input
+# and cache costs are dominated by uncontrollable context overhead.
 # Reads CLAUDE_CODE_SESSION_ID and CLAUDE_PROJECT_DIR from env.
 set -uo pipefail
 
@@ -32,14 +33,7 @@ if [ ${#files[@]} -eq 0 ]; then
 fi
 
 if command -v jq >/dev/null 2>&1; then
-  jq -s '
-    [.[] | (.message?.usage? // empty)
-      | (.input_tokens // 0)
-      + (.output_tokens // 0)
-      + (.cache_creation_input_tokens // 0)
-      + (.cache_read_input_tokens // 0)
-    ] | add // 0
-  ' "${files[@]}"
+  jq -s '[.[] | (.message?.usage?.output_tokens // 0)] | add // 0' "${files[@]}"
 else
   python3 - "${files[@]}" <<'PY'
 import json, sys
@@ -58,10 +52,7 @@ for path in sys.argv[1:]:
                 usage = (obj.get("message") or {}).get("usage")
                 if not usage:
                     continue
-                total += (usage.get("input_tokens", 0)
-                          + usage.get("output_tokens", 0)
-                          + usage.get("cache_creation_input_tokens", 0)
-                          + usage.get("cache_read_input_tokens", 0))
+                total += usage.get("output_tokens", 0)
     except FileNotFoundError:
         pass
 print(total)

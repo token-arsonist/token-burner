@@ -31,8 +31,8 @@ run_case() {
 }
 
 run_case "empty"       empty.jsonl       0
-run_case "single-turn" single-turn.jsonl 15
-run_case "multi-turn"  multi-turn.jsonl  680
+run_case "single-turn" single-turn.jsonl 3
+run_case "multi-turn"  multi-turn.jsonl  70
 
 echo
 echo "$PASS passed, $FAIL failed"
