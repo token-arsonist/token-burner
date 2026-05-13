@@ -55,7 +55,7 @@ Each component file has one responsibility. Pages compose components — they do
 
 - [ ] **Step 1.1: Create site directory and run `pnpm init` equivalent**
 
-Run from repo root (`/Users/james/token-burner`):
+Run from the repo root:
 ```bash
 mkdir -p site/src/{layouts,styles,components,pages} site/public
 cd site

@@ -1,7 +1,7 @@
 # Token Burner — Design
 
 **Status:** Draft · 2026-05-13
-**Author:** James (with Claude)
+**Author:** token-arsonist (with Claude)
 
 A tongue-in-cheek tool for engineers being evaluated on AI token usage. Two deliverables: a **Claude Code plugin** (the real product, where token burning happens) and a **parody marketing site** (where the bit lives — manifesto, recipe catalog, compliance calculator). Plugin is fully local; site has no backend, no telemetry, no accounts.
 
