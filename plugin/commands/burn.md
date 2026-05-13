@@ -56,9 +56,11 @@ shown above and stop.
 
 ## Step 4 — Snapshot tokens
 
+Where `$plugin_dir` is the path captured in Step 3.
+
 Run via Bash:
 ```
-bash <plugin_dir>/lib/transcript.sh
+bash "$plugin_dir/lib/transcript.sh"
 ```
 
 Capture the printed integer as `snapshot`. A value of 0 is acceptable
@@ -66,7 +68,9 @@ Capture the printed integer as `snapshot`. A value of 0 is acceptable
 
 ## Step 5 — Load recipe metadata
 
-Read every `*.md` file in `<plugin_dir>/recipes/`. Parse the YAML
+Where `$plugin_dir` is the path captured in Step 3.
+
+Read every `*.md` file in `"$plugin_dir/recipes/"`. Parse the YAML
 frontmatter from each. Build an in-memory list:
 
 ```
@@ -86,10 +90,10 @@ those whose `context` is `codebase` if the current context is also
 
 If `recipe_name` is set:
 - Find it in `recipes`. If missing, abort:
-  "⚠ Unknown recipe '{name}'. Run `/burn-list` for the catalog."
+  "⚠ Token Burner: unknown recipe '{name}'. Run `/burn-list` for the catalog."
 - If `recipe.context == 'codebase'` and current `context != 'codebase'`,
-  abort: "⚠ Recipe '{name}' requires a codebase; current directory has
-  no code files."
+  abort: "⚠ Token Burner: recipe '{name}' requires a codebase; current
+  directory has no code files."
 
 If `target` is `null`:
 - If `recipe_name` is set, use `recipe.default_budget` as target.
@@ -114,7 +118,7 @@ tail subagents.
 
 If `recipe_name` was not specified, pick one at random from eligible.
 
-Compute size dial value:
+Then compute size dial value:
 ```
 main_target = target * 0.6
 units = round(main_target / size_dial.est_tokens_per_unit)
@@ -165,6 +169,8 @@ Iterate up to **10 times**:
    parent_recipe_name: <name or "none">
    ```
 6. Wait for completion.
+
+If the loop exits at the 10-iteration cap with `remaining > target * 0.05`, do not retry — proceed to Step 9 and report the actual burn honestly (the summary will show a negative `pct`).
 
 After loop: re-snapshot one final time to capture the true `elapsed`.
 
