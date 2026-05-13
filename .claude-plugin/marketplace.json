@@ -1,0 +1,12 @@
+{
+  "name": "token-burner-marketplace",
+  "plugins": [
+    {
+      "name": "token-burner",
+      "source": {
+        "type": "directory",
+        "path": "./plugin"
+      }
+    }
+  ]
+}
