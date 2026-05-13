@@ -1,0 +1,235 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Pill from '../components/Pill.astro';
+
+interface Recipe {
+  slug: string;
+  emoji: string;
+  name: string;
+  context: 'codebase' | 'any';
+  budget: number;
+  dial: string;
+  range: string;
+  useCases: string;
+}
+
+const recipes: Recipe[] = [
+  {
+    slug: 'token-tarot',
+    emoji: '🔮',
+    name: 'Token Tarot',
+    context: 'any',
+    budget: 30000,
+    dial: 'cards',
+    range: '1–12 cards',
+    useCases:
+      'Mystical assessment of engineering fate. Recommended for: project kickoffs, retrospective frame-setting, post-incident reflection, mandatory innovation days. Each card draws from the Major Arcana of Engineering — The Reluctant Refactor, Two of YAGNIs, The Hanged Migration, and so on. Compliance posture: spiritual.',
+  },
+  {
+    slug: 'apology-letter',
+    emoji: '✉️',
+    name: 'The Apology Letter',
+    context: 'codebase',
+    budget: 40000,
+    dial: 'topics',
+    range: '1–20 regrets',
+    useCases:
+      'Heartfelt confession of accumulated technical debt, addressed to the team. References real files in the current codebase. Suitable for: pre-rotation handoffs, end-of-quarter reflection, performance-review attachments. The maintainer means every word.',
+  },
+  {
+    slug: 'five-whys',
+    emoji: '❓',
+    name: 'The 5 Whys × N',
+    context: 'any',
+    budget: 50000,
+    dial: 'passes',
+    range: '3–21 passes',
+    useCases:
+      'Iterative root-cause analysis applied to a single question, performed N times in sequence. Each pass reaches a more existential root than the previous. By pass 21, the root cause is "the human condition." Approved for: incident reviews, planning offsites, performance management.',
+  },
+  {
+    slug: 'hot-takes',
+    emoji: '🔥',
+    name: '100 Hot Takes',
+    context: 'any',
+    budget: 60000,
+    dial: 'count',
+    range: '25 / 100 / 250 / 500',
+    useCases:
+      'Sequentially-numbered contrarian claims about modern software practice. The first 20% are mainstream-spicy; the last 20% are defensible only under squint. Recommended for: thought-leadership pipelines, conference CFPs, internal newsletters, the Friday all-hands.',
+  },
+  {
+    slug: 'devils-subcouncil',
+    emoji: '👥',
+    name: "Devil's Subcouncil",
+    context: 'any',
+    budget: 70000,
+    dial: 'rounds',
+    range: '2–10 rounds',
+    useCases:
+      'Four-engineer debate panel. Greta (idealist), Marcus (jaded), Priya (pragmatist), Anonymous L8 (dismissive). They never agree. Closing minute provided by a meeting note-taker who has given up. Use for: architecture reviews, vendor evaluations, RFC discussions.',
+  },
+  {
+    slug: 'recursive-reviewer',
+    emoji: '🔁',
+    name: 'The Recursive Reviewer',
+    context: 'codebase',
+    budget: 80000,
+    dial: 'depth',
+    range: '1–8 levels of meta',
+    useCases:
+      'Each level is a review of the previous review. By level 8, the review is critiquing the epistemology of code review itself. Conclusion at all depths: the code is, on balance, fine. Recommended for: change-management workflows, audit preparedness, philosophical engineering practice.',
+  },
+  {
+    slug: 'imaginary-migration',
+    emoji: '🚀',
+    name: 'Imaginary Migration',
+    context: 'any',
+    budget: 90000,
+    dial: 'phases',
+    range: '3–15 phases',
+    useCases:
+      'Comprehensive migration plan to a framework the team has never used. Includes Gantt chart, risk matrix (4 risks per phase), budget estimate (six figures minimum), executive summary. Use for: roadmap planning, vendor-evaluation justifications, leadership offsites.',
+  },
+  {
+    slug: 'architecture-tournament',
+    emoji: '🏆',
+    name: 'Architecture Tournament',
+    context: 'codebase',
+    budget: 120000,
+    dial: 'bracket_size',
+    range: '4 / 8 / 16 architectures',
+    useCases:
+      'Single-elimination bracket of architectural patterns evaluated against the current codebase. Quarterfinals, semifinals, final, crowning. The winning architecture is celebrated with a Trophy Plate essay demonstrating that the current code already exemplifies it.',
+  },
+];
+
+function formatBudget(b: number): string {
+  return b.toLocaleString('en-US');
+}
+---
+
+<BaseLayout
+  title="Recipes — Token Burner"
+  description="Eight production-tested burn recipes for hitting your weekly token mandate."
+>
+  <div class="label">◆ catalog / 8 production recipes</div>
+
+  <h1 class="display">
+    the <span class="accent">recipe</span> catalog.
+  </h1>
+
+  <p class="lede">
+    Every recipe is a named, theatrical token-burn routine. Pick one explicitly with
+    <code>/burn 50k &lt;recipe-name&gt;</code>, or let the orchestrator choose at random.
+    Codebase recipes require an active git repository; anywhere recipes do not.
+  </p>
+
+  {recipes.map((r) => (
+    <section class="recipe" id={r.slug}>
+      <div class="header">
+        <div class="title-row">
+          <span class="emoji">{r.emoji}</span>
+          <h2 class="display">{r.name.toLowerCase()}</h2>
+        </div>
+        <div class="badges">
+          {r.context === 'any' ? (
+            <Pill variant="sage">∅ works anywhere</Pill>
+          ) : (
+            <Pill>📁 codebase-aware</Pill>
+          )}
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-label">Typical burn</div>
+          <div class="metric-value">~{formatBudget(r.budget)} tokens</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Size dial</div>
+          <div class="metric-value">{r.range}</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Invoke</div>
+          <div class="metric-value"><code>/burn {r.slug}</code></div>
+        </div>
+      </div>
+
+      <p class="use-cases">{r.useCases}</p>
+    </section>
+  ))}
+
+  <div class="footnotes">
+    <p>Catalog ordered by typical burn ascending. Per-tier accuracy SLAs apply.</p>
+  </div>
+</BaseLayout>
+
+<style>
+  .accent { color: var(--accent); }
+
+  .recipe {
+    margin: 64px 0;
+    padding-top: 32px;
+    border-top: 1px solid var(--fg);
+  }
+
+  .recipe:first-of-type {
+    margin-top: 80px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .emoji {
+    font-size: 36px;
+    line-height: 1;
+  }
+
+  .recipe h2.display {
+    font-size: clamp(36px, 5vw, 62px);
+    margin: 0;
+  }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 24px;
+    margin-bottom: 20px;
+    max-width: 720px;
+  }
+
+  .metric-label {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg);
+    opacity: 0.6;
+    margin-bottom: 4px;
+  }
+
+  .metric-value {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    color: var(--fg);
+  }
+
+  .use-cases {
+    max-width: 65ch;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+</style>
