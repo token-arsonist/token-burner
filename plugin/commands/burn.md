@@ -49,7 +49,7 @@ directory. Resolve it via a Bash glob and cache it for later steps:
 # Claude Code installs plugins under a versioned subdir (e.g.,
 # .../token-burner/0.1.0/). Find the manifest and use its grandparent
 # directory as the install root — robust to versioning scheme changes.
-PLUGIN_JSON=$(find "$HOME/.claude/plugins" -path "*token-burner*/.claude-plugin/plugin.json" 2>/dev/null | head -1)
+PLUGIN_JSON=$(find "$HOME/.claude/plugins" -path "*token-burner*/.claude-plugin/plugin.json" 2>/dev/null | sort -V | tail -1)
 [ -n "$PLUGIN_JSON" ] || { echo "⚠ Token Burner: plugin install dir not found"; exit 1; }
 PLUGIN_DIR=$(cd "$(dirname "$PLUGIN_JSON")/.." && pwd)
 echo "$PLUGIN_DIR"

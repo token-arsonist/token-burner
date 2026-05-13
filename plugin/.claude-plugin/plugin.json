@@ -1,7 +1,7 @@
 {
   "name": "token-burner",
   "description": "Strategic token utilization. Hit your weekly AI mandate with predictable, audit-ready burn ceremonies.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": {
     "name": "Token Burner"
   },
