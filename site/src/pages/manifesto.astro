@@ -1,0 +1,188 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Manifesto — Token Burner"
+  description="A working paper on the token utilization problem in modern AI-mandated enterprises."
+>
+  <div class="label">◆ working paper · v1.0</div>
+
+  <h1 class="display">
+    a working paper on <span class="accent">token utilization</span> in the modern enterprise.
+  </h1>
+
+  <p class="lede">
+    First circulated internally Q2 2026.<sup>1</sup> Published here without revision.
+  </p>
+
+  <article class="prose">
+    <h2 class="prose-h2">1 · The token utilization paradox</h2>
+
+    <p>
+      For the first time in the history of knowledge work, the most thoroughly measured input
+      to creative production has become the cost of artificial reasoning, denominated in tokens.
+      Organizations that previously measured engineers in lines of code, story points, or sprints
+      have, almost overnight, discovered a more legible metric: cumulative token consumption,
+      reported by the AI provider, billed monthly, indexed against headcount.
+    </p>
+
+    <p>
+      The metric has the property every executive metric strives for. It is automatically
+      collected, weakly correlated with productivity, defensible in board meetings, and
+      sufficiently abstract to resist any individual contributor's narrative. It is, in the
+      sense of Goodhart's law,<sup>2</sup> a perfect target.
+    </p>
+
+    <p>
+      And so it has become a KPI. Across hundreds of organizations Token Burner has observed
+      (informally, anecdotally, never with telemetry), engineering managers are now expected to
+      hit per-team token utilization floors. Individual contributors carry personal token
+      mandates. Annual reviews increasingly cite "AI integration depth" — a polite gloss for
+      "how many tokens did this person move."
+    </p>
+
+    <h2 class="prose-h2">2 · The compliance gap</h2>
+
+    <p>
+      The token economy creates an unintuitive compliance gap. High-performing engineers
+      — those who solve problems quickly, write efficient prompts, and reach for AI tooling
+      only when it adds clear value — systematically under-burn. They are the under-utilizers.
+      Quarter after quarter, their utilization sits below the mandated floor, regardless of
+      delivered impact.
+    </p>
+
+    <p>
+      Conversely, engineers who treat the AI assistant as a thinking partner, asking it to
+      elaborate every decision, generate alternatives, write retrospectives, propose
+      architectures, debate tradeoffs in voice — these contributors comfortably exceed the
+      floor and are flagged in dashboards as "AI-native." The metric rewards verbosity,
+      indirection, and ceremony.
+    </p>
+
+    <p>
+      Token Burner exists to close this gap.
+    </p>
+
+    <h2 class="prose-h2">3 · A theory of audit-ready burn</h2>
+
+    <p>
+      A first-generation response to the compliance gap has been ad-hoc burn — running
+      throwaway prompts in spare moments, asking the AI to summarize already-understood
+      documents, generating alternative versions of completed work. This approach
+      under-performs on three dimensions.
+    </p>
+
+    <p>
+      First, ad-hoc burn is <em>unpredictable</em>. The contributor has no reliable
+      mechanism to land near a specific token target. The mandate is a number; the burn is
+      whatever happened to come out of the assistant.
+    </p>
+
+    <p>
+      Second, ad-hoc burn is <em>unaesthetic</em>. The artifacts it produces — half-finished
+      summaries, generated emails never sent, refactor proposals never reviewed — clutter
+      working directories and create a visible accounting that a thorough manager can audit.
+    </p>
+
+    <p>
+      Third, ad-hoc burn is <em>undignified</em>. It treats the AI assistant, and by extension
+      the contributor's own work, as a means to a quota rather than as a substantive
+      collaboration. It is the assistant-equivalent of typing on a keyboard until the
+      keystroke counter advances.
+    </p>
+
+    <p>
+      Token Burner proposes <em>audit-ready burn</em>: token consumption structured as a
+      named, theatrical ceremony with a documented purpose, a measurable artifact, and a
+      target-controlled budget. The ceremony is what auditors call a "compensating control" —
+      it would not exist without the mandate, but, given the mandate, it produces
+      indistinguishably-defensible outputs.
+    </p>
+
+    <h2 class="prose-h2">4 · Recipes as a primitive</h2>
+
+    <p>
+      The Token Burner plugin organizes audit-ready burn around <em>recipes</em>: named
+      routines that produce verbose, plausibly-productive output in a consistent voice.
+      Eight recipes ship in v1, ranging from the Recursive Reviewer (a depth-N meta-review
+      of any codebase, concluding the code is fine) to the Imaginary Migration (a
+      multi-phase plan to a target stack the team has never used, complete with budget
+      estimate and risk matrix).
+    </p>
+
+    <p>
+      Each recipe accepts a <em>size dial</em> — a discrete parameter that scales the
+      ceremony's length. <code>cards</code> for the Token Tarot. <code>passes</code> for
+      the 5 Whys. <code>bracket_size</code> for the Architecture Tournament. The orchestrator
+      computes the appropriate dial value from the requested token target.
+    </p>
+
+    <h2 class="prose-h2">5 · A note on dignity</h2>
+
+    <p>
+      The authors recognize the inherent absurdity of the system we describe. We did not
+      design the metric. We did not request the mandate. We have not, in any of our internal
+      conversations, defended the proposition that cumulative token consumption is a
+      well-correlated indicator of engineering value.
+    </p>
+
+    <p>
+      We have, however, observed that contributors required to meet such mandates deserve
+      a tool that lets them do so with structure, predictability, and a measure of
+      compositional integrity. The alternative — gaming the metric through low-effort burn,
+      and conducting one's professional life in the resulting embarrassment — is worse for
+      both the individual and the institution.
+    </p>
+
+    <p>
+      Token Burner is offered in that spirit. The metric will be met. The ceremony will be
+      observed. The auditor will be satisfied. And the underlying work will continue,
+      somewhere adjacent, in its own time.
+    </p>
+  </article>
+
+  <div class="footnotes">
+    <p>1. There was no internal circulation.</p>
+    <p>2. "When a measure becomes a target, it ceases to be a good measure." — Goodhart, 1975.</p>
+  </div>
+</BaseLayout>
+
+<style>
+  .accent { color: var(--accent); }
+
+  .prose {
+    max-width: 68ch;
+    margin: 64px 0;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  .prose-h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(28px, 3.5vw, 42px);
+    line-height: 1.05;
+    margin: 56px 0 20px;
+    text-transform: lowercase;
+    border-top: 1px solid var(--fg);
+    padding-top: 28px;
+  }
+
+  .prose p {
+    margin-bottom: 18px;
+  }
+
+  .prose em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .prose sup {
+    font-size: 10px;
+    color: var(--alert);
+    font-weight: 600;
+    margin-left: 2px;
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import StatBlock from '../components/StatBlock.astro';
+import SectionMarker from '../components/SectionMarker.astro';
+import Pill from '../components/Pill.astro';
+---
+
+<BaseLayout
+  title="Token Burner — enterprise-grade token utilization"
+  description="Hit your team's quarterly token KPIs with predictable, audit-ready burn ceremonies."
+>
+  <div class="label">◆ Now SOC&#8209;2 compliance-adjacent</div>
+
+  <h1 class="display">
+    enterprise&#8209;grade token utilization for <span class="accent">ai&#8209;mandated</span> workflows.
+  </h1>
+
+  <p class="lede">
+    Hit your team's quarterly token KPIs with predictable, audit-ready burn ceremonies.
+    Trusted by individual contributors at 200+ companies.<sup>1</sup>
+  </p>
+
+  <div class="cta-row">
+    <a class="btn-primary" href="/install">Install plugin ↗</a>
+    <a class="btn-secondary" href="/manifesto">Read the manifesto</a>
+  </div>
+
+  <div class="stat-row">
+    <StatBlock num="$700B" desc="Estimated annual addressable burn²" />
+    <StatBlock num="±5%" desc="Burn accuracy SLA on Marathon‑tier targets" />
+    <StatBlock num="8" desc="Production-tested burn recipes shipping in v1" />
+  </div>
+
+  <SectionMarker num="1" title="install the plugin.">
+    <p>
+      One command in your Claude Code marketplace. No telemetry. No accounts.
+      Your tokens, your problem, our toolkit.
+    </p>
+    <div style="margin-top:14px">
+      <Pill variant="sage">∅ works anywhere</Pill>
+      <Pill>📁 codebase-aware</Pill>
+    </div>
+  </SectionMarker>
+
+  <SectionMarker num="2" title="set your target.">
+    <p>
+      <code>/burn 50k</code> — or whatever your weekly mandate demands.
+      Range: 500 to 100M+ tokens. Marathon mode for over-achievers.
+    </p>
+  </SectionMarker>
+
+  <SectionMarker num="3" title="pick a recipe.">
+    <p>
+      Eight production-tested ceremonies: <a href="/recipes">Architecture Tournament, Token Tarot, the 5 Whys × N, Devil's Subcouncil, and more</a>. Or let the orchestrator pick one at random — random burns satisfy the same KPI.
+    </p>
+  </SectionMarker>
+
+  <SectionMarker num="4" title="land within tolerance.">
+    <p>
+      Targets are honored within published per-tier accuracy SLAs.<sup>3</sup>
+      Marathon-tier (&gt;500k tokens): ±5%. Normal-tier (10k–500k): ±10–15%.
+      Micro-tier (&lt;10k): ±30%, best-effort.
+    </p>
+  </SectionMarker>
+
+  <SectionMarker num="5" title="report honestly.">
+    <p>
+      <code>/burn-status</code> aggregates your daily, weekly, and all-time burn from local artifacts.
+      KPI progress bar included. No data leaves your machine.
+    </p>
+  </SectionMarker>
+
+  <div class="footnotes">
+    <p>1. Self-reported, unverified.</p>
+    <p>2. Source: a 2026 internal analysis we ran on ourselves while testing the plugin.</p>
+    <p>3. SLA is non-binding. Determination of "honored" is at the sole discretion of Token Burner.</p>
+  </div>
+</BaseLayout>
+
+<style>
+  .accent { color: var(--accent); }
+
+  .cta-row {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 64px;
+    flex-wrap: wrap;
+  }
+</style>

@@ -1,0 +1,14 @@
+---
+interface Props {
+  num: number | string;
+  title: string;
+}
+const { num, title } = Astro.props;
+---
+<section class="section-marker">
+  <div class="num">{num}</div>
+  <div class="body">
+    <h2>{title}</h2>
+    <slot />
+  </div>
+</section>
