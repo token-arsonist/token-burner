@@ -6,10 +6,7 @@
   "plugins": [
     {
       "name": "token-burner",
-      "source": {
-        "type": "directory",
-        "path": "./plugin"
-      }
+      "source": "./plugin"
     }
   ]
 }
