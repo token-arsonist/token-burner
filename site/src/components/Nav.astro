@@ -1,0 +1,55 @@
+---
+const links = [
+  { href: '/', label: 'Platform' },
+  { href: '/recipes', label: 'Recipes' },
+  { href: '/calculator', label: 'Calculator' },
+  { href: '/manifesto', label: 'Manifesto' },
+];
+---
+
+<nav class="nav">
+  <a href="/" class="brand">TOKEN&nbsp;BURNER</a>
+  <div class="links">
+    {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    <a href="/install" class="install-link">Install&nbsp;↗</a>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 80px;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .brand {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .links {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .links a {
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .links a:hover { color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .links { gap: 20px; }
+  }
+</style>
