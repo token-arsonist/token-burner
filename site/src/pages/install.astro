@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Install — Token Burner"
+  description="Install Token Burner via the Claude Code marketplace and run your first /burn."
+>
+  <div class="label">◆ installation · ~30 seconds</div>
+
+  <h1 class="display">
+    install <span class="accent">token burner</span>.
+  </h1>
+
+  <p class="lede">
+    Token Burner is a Claude Code plugin. It runs entirely in your local session. No accounts.
+    No telemetry. No data leaves your machine.
+  </p>
+
+  <h2 class="prose-h2">add the marketplace</h2>
+
+  <p>From within a Claude Code session, run:</p>
+
+  <pre><code>/plugin marketplace add github.com/example/token-burner</code></pre>
+
+  <h2 class="prose-h2">install the plugin</h2>
+
+  <pre><code>/plugin install token-burner@token-burner-marketplace</code></pre>
+
+  <p>Then reload to pick up the new slash commands:</p>
+
+  <pre><code>/reload-plugins</code></pre>
+
+  <h2 class="prose-h2">verify</h2>
+
+  <p>Run <code>/burn-list</code>. You should see the eight-recipe catalog. If you do, you're done.</p>
+
+  <h2 class="prose-h2">command reference</h2>
+
+  <div class="cmd-grid">
+    <div class="cmd">
+      <code>/burn</code>
+      <p>Random eligible recipe at its default size.</p>
+    </div>
+    <div class="cmd">
+      <code>/burn 50k</code>
+      <p>Random recipe sized to ~50,000 tokens.</p>
+    </div>
+    <div class="cmd">
+      <code>/burn architecture-tournament</code>
+      <p>Named recipe at its default size.</p>
+    </div>
+    <div class="cmd">
+      <code>/burn 50k architecture-tournament</code>
+      <p>Named recipe sized to ~50,000 tokens.</p>
+    </div>
+    <div class="cmd">
+      <code>/burn-list</code>
+      <p>Show the recipe catalog.</p>
+    </div>
+    <div class="cmd">
+      <code>/burn-status</code>
+      <p>Today / this week / all-time totals. Last 5 sessions.</p>
+    </div>
+  </div>
+
+  <p>Targets accept <code>k</code> (×1,000) and <code>M</code> (×1,000,000) suffixes. <code>/burn 1.5M</code> requests a Marathon-tier burn of 1,500,000 tokens.</p>
+
+  <h2 class="prose-h2">settings</h2>
+
+  <p>Optional configuration at <code>$PWD/.token-burner.json</code> or <code>~/.config/token-burner/config.json</code>:</p>
+
+  <pre><code>{`{
+  "artifacts": "off",
+  "artifact_dir": ".burn/",
+  "default_target": null,
+  "exclude_recipes": [],
+  "marathon_threshold": 500000,
+  "weekly_kpi": null
+}`}</code></pre>
+
+  <p>Set <code>artifacts</code> to <code>"always"</code> to write a markdown report of each session, or <code>"opt-in"</code> to require <code>--save</code> on the command line. Set <code>weekly_kpi</code> to enable the progress bar in <code>/burn-status</code>.</p>
+
+  <div class="footnotes">
+    <p>1. Determination of "verified" is at the user's own discretion. Token Burner does not certify.</p>
+  </div>
+</BaseLayout>
+
+<style>
+  .accent { color: var(--accent); }
+
+  .prose-h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(28px, 3.5vw, 42px);
+    line-height: 1.05;
+    margin: 56px 0 20px;
+    text-transform: lowercase;
+    border-top: 1px solid var(--fg);
+    padding-top: 28px;
+  }
+
+  pre {
+    margin: 16px 0 24px;
+  }
+
+  p { max-width: 65ch; }
+
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin: 24px 0 36px;
+    max-width: 800px;
+  }
+
+  .cmd {
+    padding: 16px 18px;
+    background: var(--bg-alt);
+    border: 1px solid var(--fg);
+  }
+
+  .cmd code {
+    display: block;
+    background: transparent;
+    padding: 0;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .cmd p {
+    margin: 0;
+    font-size: 14px;
+  }
+</style>
