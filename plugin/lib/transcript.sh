@@ -21,8 +21,8 @@ fi
 
 # Fallback: most recently modified jsonl under projects/
 if [ ${#files[@]} -eq 0 ]; then
-  fallback=$(find "$HOME/.claude/projects" -name "*.jsonl" 2>/dev/null \
-    | xargs ls -t 2>/dev/null | head -1)
+  fallback=$(find "$HOME/.claude/projects" -name "*.jsonl" -type f -print0 2>/dev/null \
+    | xargs -0 ls -t 2>/dev/null | head -1)
   [ -n "$fallback" ] && files+=("$fallback")
 fi
 
