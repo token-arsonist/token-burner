@@ -1,5 +1,8 @@
 {
   "name": "token-burner-marketplace",
+  "owner": {
+    "name": "Token Burner"
+  },
   "plugins": [
     {
       "name": "token-burner",
