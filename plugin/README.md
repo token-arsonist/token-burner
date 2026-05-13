@@ -5,8 +5,8 @@ A Claude Code plugin for strategic token utilization. Hit your weekly AI mandate
 ## Install
 
 ```
-/plugin marketplace add example/token-burner
-/plugin install token-burner@token-burner
+/plugin marketplace add github.com/token-arsonist/token-burner
+/plugin install token-burner@token-burner-marketplace
 ```
 
 ## Usage
@@ -38,7 +38,7 @@ Per-tier accuracy reflects the discipline ceiling of subagent length-control und
 - No telemetry. The plugin never phones home. All burn data is local; `/burn-status` aggregates from `.burn/` artifacts (if enabled in settings).
 - No hard cap on burn targets. Rate limits are the only ceiling.
 
-See [the manifesto](https://tokenburner.example.com/manifesto) for context.
+See [the manifesto](https://token-burner.pages.dev/manifesto) for context.
 
 ---
 
