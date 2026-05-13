@@ -1,0 +1,257 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Compliance Calculator — Token Burner"
+  description="Compute a prescribed recipe schedule for your weekly token mandate."
+>
+  <div class="label">◆ tool · client-side, never phones home</div>
+
+  <h1 class="display">
+    the <span class="accent">compliance</span> calculator.
+  </h1>
+
+  <p class="lede">
+    Input your weekly token mandate and available burn time. Receive a prescribed recipe
+    schedule and projected compliance posture.<sup>1</sup>
+  </p>
+
+  <form id="calc" class="calc-form">
+    <div class="field">
+      <label for="kpi">Weekly token mandate</label>
+      <input id="kpi" type="number" min="0" step="50000" value="2000000" />
+      <span class="hint">tokens / week</span>
+    </div>
+
+    <div class="field">
+      <label for="hours">Burn time available</label>
+      <input id="hours" type="number" min="0" step="0.5" value="4" />
+      <span class="hint">hours / week</span>
+    </div>
+
+    <div class="field">
+      <label for="risk">Audit risk tolerance</label>
+      <select id="risk">
+        <option value="low">Low — visible, ceremonial, signed</option>
+        <option value="medium" selected>Medium — typical hybrid burn</option>
+        <option value="high">High — burn-only, no other engineering output</option>
+      </select>
+    </div>
+  </form>
+
+  <div id="results" class="results">
+    <h2 class="prose-h2">prescribed schedule</h2>
+    <div class="schedule" id="schedule"></div>
+
+    <h2 class="prose-h2">compliance posture</h2>
+    <div class="posture" id="posture"></div>
+
+    <h2 class="prose-h2">recommended cron</h2>
+    <pre><code id="cron"></code></pre>
+
+    <p class="disclaimer" id="disclaimer"></p>
+  </div>
+
+  <div class="footnotes">
+    <p>1. Projections are illustrative. Token Burner does not certify any compliance posture.</p>
+  </div>
+</BaseLayout>
+
+<script is:inline>
+  const recipes = [
+    { name: 'Token Tarot',             budget: 30000,  emoji: '🔮' },
+    { name: 'The Apology Letter',      budget: 40000,  emoji: '✉️' },
+    { name: 'The 5 Whys × N',          budget: 50000,  emoji: '❓' },
+    { name: '100 Hot Takes',           budget: 60000,  emoji: '🔥' },
+    { name: "Devil's Subcouncil",      budget: 70000,  emoji: '👥' },
+    { name: 'The Recursive Reviewer',  budget: 80000,  emoji: '🔁' },
+    { name: 'Imaginary Migration',     budget: 90000,  emoji: '🚀' },
+    { name: 'Architecture Tournament', budget: 120000, emoji: '🏆' },
+  ];
+
+  function postureFromRatio(ratio) {
+    if (ratio < 0.5)  return { label: 'UNDER-BURNED',     class: 'alert',   note: 'Substantially below mandate. Quarterly review risk: high.' };
+    if (ratio < 0.9)  return { label: 'AT RISK',          class: 'alert',   note: 'Below mandate. Increase scheduled burn or expand recipe rotation.' };
+    if (ratio < 1.05) return { label: 'COMPLIANT',        class: 'sage',    note: 'On target. Maintain current cadence.' };
+    if (ratio < 1.30) return { label: 'OVER-COMPLIANT',   class: 'sage',    note: 'Comfortably over mandate. Recommended for visibility.' };
+    return                  { label: 'ESCALATION RISK', class: 'alert', note: 'Significantly over mandate. May trigger cost-management review.' };
+  }
+
+  function plan(kpi, hours, risk) {
+    const blend = [];
+    let remaining = kpi;
+    const minSlot = Math.max(8, hours * 60 / 12);
+    let attempts = 0;
+    const sorted = [...recipes].sort((a, b) => b.budget - a.budget);
+    while (remaining > 25000 && attempts < 30) {
+      const fit = sorted.find((r) => r.budget <= remaining * 1.05) || sorted[sorted.length - 1];
+      blend.push(fit);
+      remaining -= fit.budget;
+      attempts++;
+    }
+    const totalBurn = blend.reduce((s, r) => s + r.budget, 0);
+    const ratio = totalBurn / kpi;
+
+    let cronExpr;
+    if (risk === 'low') cronExpr = `0 14 * * 1-5  # daily mid-afternoon, visible window`;
+    else if (risk === 'high') cronExpr = `*/45 * * * 1-5  # every 45 minutes during work hours`;
+    else cronExpr = `0 10,14 * * 1-5  # twice daily, morning and afternoon`;
+
+    return { blend, totalBurn, ratio, cronExpr };
+  }
+
+  function render() {
+    const kpi = Math.max(0, Number(document.getElementById('kpi').value) || 0);
+    const hours = Math.max(0, Number(document.getElementById('hours').value) || 0);
+    const risk = document.getElementById('risk').value;
+
+    if (!kpi) {
+      document.getElementById('results').style.display = 'none';
+      return;
+    }
+    document.getElementById('results').style.display = '';
+
+    const { blend, totalBurn, ratio, cronExpr } = plan(kpi, hours, risk);
+
+    const counts = new Map();
+    blend.forEach((r) => counts.set(r.name, (counts.get(r.name) || 0) + 1));
+
+    const scheduleHtml = [...counts.entries()]
+      .map(([name, n]) => {
+        const r = recipes.find((x) => x.name === name);
+        const total = n * r.budget;
+        return `<div class="row"><span class="emoji">${r.emoji}</span><span class="name">${name}</span><span class="count">× ${n}</span><span class="total">${total.toLocaleString()} tokens</span></div>`;
+      })
+      .join('');
+
+    document.getElementById('schedule').innerHTML =
+      scheduleHtml +
+      `<div class="row total-row"><span></span><span class="name"><b>Total</b></span><span></span><span class="total"><b>${totalBurn.toLocaleString()}</b> / ${kpi.toLocaleString()} (${(ratio * 100).toFixed(1)}%)</span></div>`;
+
+    const posture = postureFromRatio(ratio);
+    document.getElementById('posture').innerHTML =
+      `<div class="posture-badge ${posture.class}">${posture.label}</div><p>${posture.note}</p>`;
+
+    document.getElementById('cron').textContent = cronExpr;
+
+    document.getElementById('disclaimer').textContent =
+      `Projection assumes ${hours} hours/week of attended burn. Marathon-tier recipes recommended for budget-density.`;
+  }
+
+  document.querySelectorAll('#calc input, #calc select').forEach((el) => {
+    el.addEventListener('input', render);
+    el.addEventListener('change', render);
+  });
+
+  render();
+</script>
+
+<style>
+  .accent { color: var(--accent); }
+
+  .prose-h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(28px, 3.5vw, 42px);
+    line-height: 1.05;
+    margin: 56px 0 20px;
+    text-transform: lowercase;
+    border-top: 1px solid var(--fg);
+    padding-top: 28px;
+  }
+
+  .calc-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    max-width: 800px;
+    margin: 48px 0 24px;
+    padding: 28px;
+    border: 1px solid var(--fg);
+    background: var(--bg-alt);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .field label {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--fg);
+  }
+
+  .field input,
+  .field select {
+    font-family: var(--font-ui);
+    font-size: 15px;
+    padding: 10px 12px;
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--fg);
+    border-radius: 0;
+  }
+
+  .field .hint {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    color: var(--fg);
+    opacity: 0.6;
+  }
+
+  .schedule {
+    margin-bottom: 12px;
+  }
+
+  .schedule .row {
+    display: grid;
+    grid-template-columns: 36px 1fr 80px 1fr;
+    gap: 12px;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--bg-tint);
+    font-family: var(--font-ui);
+    font-size: 14px;
+  }
+
+  .schedule .total-row {
+    border-top: 1px solid var(--fg);
+    border-bottom: none;
+    margin-top: 8px;
+    padding-top: 12px;
+  }
+
+  .schedule .total {
+    text-align: right;
+  }
+
+  .schedule .emoji {
+    font-size: 18px;
+  }
+
+  .posture-badge {
+    display: inline-block;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+
+  .posture-badge.sage  { background: var(--accent-2); color: var(--fg); }
+  .posture-badge.alert { background: var(--alert);    color: var(--bg); }
+
+  .disclaimer {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: 24px;
+  }
+</style>
