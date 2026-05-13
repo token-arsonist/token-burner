@@ -40,7 +40,7 @@ Deploy notes: [`site/DEPLOY.md`](site/DEPLOY.md).
 
 | Component | Version | Tag |
 |---|---|---|
-| Plugin    | v0.1.2  | `v0.1.2` |
+| Plugin    | v0.1.3  | `v0.1.3` |
 | Site      | v0.1.0  | `site-v0.1.0` |
 
 Per-tier burn accuracy SLA (plugin): Marathon ±5%, Normal ±10–15%, Micro ±30%.² No hard cap on burn targets. Rate limits are the only ceiling.
