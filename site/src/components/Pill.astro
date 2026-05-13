@@ -1,0 +1,8 @@
+---
+interface Props {
+  variant?: 'default' | 'sage' | 'alert';
+}
+const { variant = 'default' } = Astro.props;
+const cls = variant === 'default' ? 'pill' : `pill ${variant}`;
+---
+<span class={cls}><slot /></span>
